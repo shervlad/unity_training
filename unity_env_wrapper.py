@@ -37,32 +37,15 @@ class UnityEnvWrapper:
         steps = 5
         for i,ID in enumerate(ds.agent_id):
             print(i,ID)
-            raycast = ds.obs[0][i][rays*(steps-1):]
-            positions = ds.obs[1][i]
-            state = np.concatenate((raycast,positions)).flatten()
-            actors[ID] = {'obs':state,'reward':ds.reward[i],'done':False}
+            # raycast = ds.obs[0][i][rays*(steps-1):]
+            # positions = ds.obs[1][i]
+            # state = np.concatenate((raycast,positions)).flatten()
+            actors[ID] = {'obs':ds.obs,'reward':ds.reward[i],'done':False}
 
         for i,ID in enumerate(ts.agent_id):
-            raycast = ts.obs[0][i][rays*(steps-1):]
-            positions = ts.obs[1][i]
-            state = np.concatenate((raycast,positions)).flatten()
-            actors[ID] = {'obs':state,'reward':ts.reward[i],'done':True}
+            # raycast = ts.obs[0][i][rays*(steps-1):]
+            # positions = ts.obs[1][i]
+            # state = np.concatenate((raycast,positions)).flatten()
+            actors[ID] = {'obs':ts.obs,'reward':ts.reward[i],'done':True}
 
         return actors
-
-    def reset(self):
-        actors = {}
-        ds,ts =  self.env.reset()
-        for i,ID in enumerate(ds.agent_id):
-            actors[ID] = {'obs':ds.obs[i],'reward':ds.reward[i],'done':False}
-
-        for i,ID in enumerate(ts.agent_id):
-            actors[ID] = {'obs':ts.obs[i],'reward':ts.reward[i],'done':True}
-
-        return actors
-
-
-# env_fn = lambda : UnityEnvWrapper()
-
-# ppo(env_fn)
-
