@@ -1,3 +1,4 @@
+from __future__ import print_function
 import torch
 import torch.nn as nn
 import numpy as np
@@ -5,7 +6,7 @@ from torch.optim import Adam
 from torch.distributions.normal import Normal
 import csv
 class GaussianMLP(torch.nn.Module):
-    def __init__(self, dimensions, activation = nn.ReLU, output_activation=nn.Tanh):
+    def __init__(self, dimensions, activation = nn.Tanh, output_activation=nn.Tanh):
         super().__init__()
 
         layers = []
@@ -89,27 +90,27 @@ class Buffer:
             self.actorsBuffers[actor] = {'states':[],'actions':[],'rewards':[],'vals':[],'logprobs':[]} 
 
     def addState(self,actor,state):
-        self.addActor(actor);
+        self.addActor(actor)
         self.actorsBuffers[actor]['states'].append(state)
 
     def addAction(self,actor,action):
-        self.addActor(actor);
+        self.addActor(actor)
         self.actorsBuffers[actor]['actions'].append(action)
 
     def addReward(self,actor,reward):
-        self.addActor(actor);
+        self.addActor(actor)
         self.actorsBuffers[actor]['rewards'].append(reward)
 
     def addVal(self,actor,val):
-        self.addActor(actor);
+        self.addActor(actor)
         self.actorsBuffers[actor]['vals'].append(val)
 
     def addLogProb(self,actor,logp):
-        self.addActor(actor);
+        self.addActor(actor)
         self.actorsBuffers[actor]['logprobs'].append(logp)
 
 def ppo(env_fn, num_epochs=10000, steps_per_epoch=400, gamma=0.98, lam = 0.95, epsilon = 0.2, 
-        pi_step=0.0001, v_step = 0.001, sgd_iterations=20, plot_fn = None, path=None):
+        pi_step=0.0001, v_step = 0.001, sgd_iterations=20, plot_fn = None, path=None, resume=False):
 
     env = env_fn()
 
@@ -118,18 +119,24 @@ def ppo(env_fn, num_epochs=10000, steps_per_epoch=400, gamma=0.98, lam = 0.95, e
     state_dims = env.state_shape
     act_dims   = env.action_shape
 
-    hidden_sizes = (64,64)
+    hidden_sizes = (64,64,64)
+
 
     pi_network = GaussianMLP(state_dims + hidden_sizes + act_dims)
     v_network  = CategoricalMLP(state_dims + hidden_sizes + (1,))
 
+    if(resume):
+        pi_network.load_state_dict(torch.load("./models/policy.pt"))
+        pi_network.eval()
+        v_network.load_state_dict(torch.load("./models/policy.pt"))
+        v_network.eval()
     pi_optimizer = Adam(pi_network.parameters(), lr = pi_step)
     v_optimizer = Adam(v_network.parameters(), lr = v_step)
 
     def update(trajectory):
         #update
         states,actions,rewards,vals,log_probs = trajectory
-
+        print("STATE SHAPE: ",states[0].shape)
         states     = torch.as_tensor(states, dtype=torch.float32)
         actions    = torch.as_tensor(actions, dtype=torch.float32)
         rewards    = torch.as_tensor(rewards, dtype=torch.float32)
@@ -174,7 +181,7 @@ def ppo(env_fn, num_epochs=10000, steps_per_epoch=400, gamma=0.98, lam = 0.95, e
 
     e = 0
     while e<num_epochs:
-        print("Epoch %s"%e)
+        # print("Epoch %s"%e)
 
 
         states = [actors[a]['obs'] for a in actors]
@@ -185,12 +192,12 @@ def ppo(env_fn, num_epochs=10000, steps_per_epoch=400, gamma=0.98, lam = 0.95, e
 
         pis = [pi_network(torch.as_tensor(state, dtype=torch.float32)) for state in states]
         actions = np.array([pi.sample().numpy() for pi in pis])
-        print("ACTIONS")
-        print(np.matrix(actions))
+        # print("ACTIONS")
+        # print(np.matrix(actions))
         logp =  np.array([pis[i].log_prob(torch.FloatTensor(actions[i])).sum(axis=-1) for i in range(len(pis))])
-        v = v_network(torch.as_tensor(states, dtype=torch.float32))
+        v = [v_network(torch.as_tensor(state, dtype=torch.float32)).item() for state in states]
 
-        print("value network: ",v)
+        # print("value network: ",v)
         for idx, ID in enumerate(actors):
             buffer.addAction(ID,actions[idx])
             buffer.addLogProb(ID,logp[idx])
@@ -203,7 +210,13 @@ def ppo(env_fn, num_epochs=10000, steps_per_epoch=400, gamma=0.98, lam = 0.95, e
                 buffer.addReward(ID,new_actors[ID]['reward'])
                 trajectory = buffer.get(ID)
                 update(trajectory)
+                if(e%10 == 0):
+                    save_metrics(e,trajectory)
+                if(e%50 == 0 and path is not None):
+                    print("saving...")
+                    save(pi_network, v_network, path)
                 e+=1
+                print("EPOCH: ",e)
                 buffer.addState(ID,new_actors[ID]['obs'])
             else:
                 buffer.addReward(ID,new_actors[ID]['reward'])
@@ -212,13 +225,7 @@ def ppo(env_fn, num_epochs=10000, steps_per_epoch=400, gamma=0.98, lam = 0.95, e
 
         actors = new_actors
 
-        # if(e%10 == 0):
-        #     plot_fn(env = env, epoch = e, pi = pi_network, v_net=v_network)
-        #     save_metrics(e,rewards,vals,mean_loss_pi,mean_loss_v,path)
 
-        if(e%50 == 0 and path is not None):
-            print("saving...")
-            save(pi_network, v_network, path)
 
 
 
@@ -228,15 +235,18 @@ def save(pi_network, v_network,path):
     torch.save(pi_network.state_dict(),path+"policy.pt")
     torch.save(v_network.state_dict(),path+"value_fn.pt")
 
-def save_metrics(epoch,rewards,vals,mean_loss_pi,mean_loss_v,path):
-    cum_r = np.sum(rewards.detach().numpy())
-    min_r = rewards.min().item()
-    max_r = rewards.max().item()
-    mean_r = rewards.mean().item()
-    min_v = vals.min().item()
-    max_v = vals.max().item()
-    mean_v = vals.mean().item()
-    with open(path+'metrics.csv', 'a+', newline='') as csvfile:
+def save_metrics(epoch,trajectory):
+    states, actions, rewards, vals, logprobs = trajectory
+    rewards = np.array(rewards)
+    vals = np.array(vals)
+    cum_r = np.sum(rewards)
+    min_r = rewards.min()
+    max_r = rewards.max()
+    mean_r = rewards.mean()
+    min_v = vals.min()
+    max_v = vals.max()
+    mean_v = vals.mean()
+    with open('metrics.csv', 'a+', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter=' ',
                                 quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        writer.writerow([epoch,cum_r,min_r,mean_r,max_r,min_v,mean_v,max_v,mean_loss_pi,mean_loss_v])
+        writer.writerow([epoch,cum_r,min_r,mean_r,max_r,min_v,mean_v,max_v])
