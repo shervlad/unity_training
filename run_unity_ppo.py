@@ -58,4 +58,3 @@ if __name__ == "__main__":
         resume = True
     env_fn = lambda : UnityEnvWrapper(filename="./20robots/Fruit Picker.exe")
     ppo(env_fn, path='./models/', resume=resume)
-
