@@ -11,11 +11,16 @@ for i in range(10000):
     state = actors[0]['obs']
 
 
+    print("TOTAL NONZERO: ", np.sum((state[0] > 0 + 0)))
+    redpoints = ((state[0] > 0.9) + 0) - ((state[0] > 1.1) + 0)
+    redgrid = redpoints.reshape((50,50,50))
+
     bluepoints = (state[0] > 1.1) + 0
     bluegrid = bluepoints.reshape((50,50,50))
 
-    redpoints = ((state[0] > 0.9) + 0) - ((state[0] > 1.1) + 0)
-    redgrid = redpoints.reshape((50,50,50))
+    notEmpty = np.sum(bluepoints + redpoints) > 5
+    if(not notEmpty):
+        continue
 
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
@@ -24,15 +29,12 @@ for i in range(10000):
     ax.set_zlim(0, 50)
 
     for (grid,color) in [(redgrid,'red'),(bluegrid,'blue')]:
-        print(color)
-        notEmpty = np.sum(grid) > 5
         z,x,y= grid.nonzero()
         # z*=10
         # x*=10
         # y*=10
-        if(notEmpty):
-            print(state)
-            ax.scatter(x, y, z, zdir='z', s=10, c= color)
+        print(state)
+        ax.scatter(x, y, z, zdir='z', s=10, c= color)
 
     plt.savefig("%s.png"%i)
     # plt.show()

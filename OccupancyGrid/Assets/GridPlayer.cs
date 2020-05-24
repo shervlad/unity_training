@@ -26,7 +26,9 @@ public class GridPlayer : Agent
         // List<float> l = gridController.getFlatGrid();
         // Debug.Log($"Adding {l.FindAll(u => u==1f).Count} ones to the output!");
         // sensor.AddObservation(l);
-        sensor.AddObservation(gridController.getLabels());
+        List<float> l = gridController.getLabels();
+        Debug.Log($"Adding {l.FindAll(u => u>0f).Count} ones to the output!");
+        sensor.AddObservation(l);
     }
 
     public override void Heuristic(float[] ActionsOut){

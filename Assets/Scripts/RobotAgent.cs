@@ -162,10 +162,11 @@ public class RobotAgent : Agent
         // Whether the penguin has eaten a fish (1 float = 1 value)
 
         sensor.AddObservation(goal.transform.position - baseRb.transform.position);
-        sensor.AddObservation(shoulderRb.transform.localPosition - baseRb.transform.position);
-        sensor.AddObservation(leftFingerRb.transform.localPosition - baseRb.transform.position);
-        sensor.AddObservation(rIghtFingerRb.transform.position - baseRb.transform.position);
-
+        sensor.AddObservation(goal.transform.position - Palm.transform.position);
+        sensor.AddObservation(shoulderRb.transform.localPosition);
+        sensor.AddObservation(shoulderRb.transform.localRotation.eulerAngles);
+        sensor.AddObservation(leftFingerRb.transform.localPosition);
+        sensor.AddObservation(rIghtFingerRb.transform.localPosition);
 
     }
 
