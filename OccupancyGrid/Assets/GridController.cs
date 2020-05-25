@@ -6,8 +6,8 @@ public class GridController : MonoBehaviour
 {
     // Start is called before the first frame update
     public GameObject prefabCell;
-    private float cellSize=0.02f;
-    private int gridSize=50;
+    private float cellSize=0.04f;
+    private int gridSize=15;
 
     private GameObject[,,] cells;
     void Start()

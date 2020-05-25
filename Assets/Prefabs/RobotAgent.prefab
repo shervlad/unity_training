@@ -1,5 +1,50 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &219218255169409500
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4630651657476829274}
+  - component: {fileID: 7742459414917249395}
+  m_Layer: 0
+  m_Name: OccupancyGrid
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4630651657476829274
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 219218255169409500}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 178110519282855025}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7742459414917249395
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 219218255169409500}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17d0cc388a16ca249b711b0526418061, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefabCell: {fileID: 1810790977643179163, guid: d06e7c24a3d1d2c49b23d15c00d46849,
+    type: 3}
 --- !u!1 &1005848590232766285
 GameObject:
   m_ObjectHideFlags: 0
@@ -266,7 +311,7 @@ Transform:
   m_GameObject: {fileID: 1772211993503202974}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.526, y: -3.860718e-17, z: 0}
-  m_LocalScale: {x: 20, y: 20, z: 20}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6245884313945041787}
   m_Father: {fileID: 0}
@@ -302,7 +347,9 @@ MonoBehaviour:
   RightFinger: {fileID: 3986797537871048327}
   Palm: {fileID: 5332294222765887488}
   Basket: {fileID: 6170718240161331019}
+  ropePrefab: {fileID: 0}
   gripperIsClosed: 0
+  grid: {fileID: 0}
 --- !u!114 &3136413102616576059
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -316,7 +363,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 12
+    VectorObservationSize: 8000
     NumStackedVectorObservations: 1
     VectorActionSize: 05000000
     VectorActionDescriptions: []
@@ -738,7 +785,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7517527147311298690
 Transform:
   m_ObjectHideFlags: 0
@@ -751,7 +798,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 178110519282855025}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5785283200509443490
 MonoBehaviour:
@@ -1261,6 +1308,7 @@ Transform:
   m_LocalPosition: {x: -0.003, y: 0, z: 0.241}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 4630651657476829274}
   - {fileID: 7517527147311298690}
   m_Father: {fileID: 860800110072519976}
   m_RootOrder: 1

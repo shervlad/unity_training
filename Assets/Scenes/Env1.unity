@@ -337,6 +337,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1031083092 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6181045380842308085, guid: 26bd15ce67e5a1243802679c3cabb423,
+    type: 3}
+  m_PrefabInstance: {fileID: 1180856434}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1180856434
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -413,6 +419,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Trivial Environment
+      objectReference: {fileID: 0}
+    - target: {fileID: 3171380974651123481, guid: 26bd15ce67e5a1243802679c3cabb423,
+        type: 3}
+      propertyPath: grid
+      value: 
+      objectReference: {fileID: 1031083092}
+    - target: {fileID: 5800271251225754354, guid: 26bd15ce67e5a1243802679c3cabb423,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5800271251225754354, guid: 26bd15ce67e5a1243802679c3cabb423,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5800271251225754354, guid: 26bd15ce67e5a1243802679c3cabb423,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6654473840789512563, guid: 26bd15ce67e5a1243802679c3cabb423,
         type: 3}

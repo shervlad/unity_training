@@ -31,6 +31,9 @@ public class RobotAgent : Agent
     private GameObject goal;
     public bool gripperIsClosed;
 
+    public GameObject grid;
+    GridController gridController;
+
     public override void Initialize(){
     //     var children = areaOne.GetComponentsInChildren<Transform>();
     //     foreach (var child in children)
@@ -41,6 +44,8 @@ public class RobotAgent : Agent
         foreArmRb     = ForeArm.GetComponent<Rigidbody>();
         leftFingerRb  = LeftFinger.GetComponent<Rigidbody>();
         rIghtFingerRb = RightFinger.GetComponent<Rigidbody>();
+
+        gridController = grid.GetComponent<GridController>();
     }
 
     public void MoveShoulder(float moveAmount){
@@ -161,12 +166,16 @@ public class RobotAgent : Agent
     {
         // Whether the penguin has eaten a fish (1 float = 1 value)
 
-        sensor.AddObservation(goal.transform.position - baseRb.transform.position);
-        sensor.AddObservation(goal.transform.position - Palm.transform.position);
-        sensor.AddObservation(shoulderRb.transform.localPosition);
-        sensor.AddObservation(shoulderRb.transform.localRotation.eulerAngles);
-        sensor.AddObservation(leftFingerRb.transform.localPosition);
-        sensor.AddObservation(rIghtFingerRb.transform.localPosition);
+        // sensor.AddObservation(goal.transform.position - baseRb.transform.position);
+        // sensor.AddObservation(goal.transform.position - Palm.transform.position);
+        // sensor.AddObservation(shoulderRb.transform.localPosition);
+        // sensor.AddObservation(shoulderRb.transform.localRotation.eulerAngles);
+        // sensor.AddObservation(leftFingerRb.transform.localPosition);
+        // sensor.AddObservation(rIghtFingerRb.transform.localPosition);
+
+        List<float> l = gridController.getLabels();
+        Debug.Log($"Adding {l.FindAll(u => u>0f).Count} ones to the output!");
+        sensor.AddObservation(l);
 
     }
 
